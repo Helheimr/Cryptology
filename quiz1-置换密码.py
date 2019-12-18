@@ -33,7 +33,7 @@ def substitution(data, encrypt_seq):
 
 
 if __name__ == "__main__":
-    data = 'zhouyang03173227'
+    data = 'zhouyang0317xxxx'
     data = re.sub(r'\s+', '', data)
 
     # 生成随机置换关系

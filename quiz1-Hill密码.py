@@ -36,22 +36,22 @@ def findModReverse(a, m):
     return u1 % m
 
 
-def get_cipher_text(message):
+def encode_text(message):
     cipher_text = mat(message) * mat(key)
     cipher_text = array(cipher_text)
     for i in range(len(cipher_text)):
         cipher_text[i] = cipher_text[i] % 26
-    print(cipher_text)
-    return cipher_text
+    cipher_text = cipher_text
+    return mat(cipher_text)
 
 
-def get_message():
-    key22 = mat(key)
-    # print(key22)
-    key0 = key22.I
-    # print(key0)
-    cipher = get_cipher_text(message)
-    mess0 = mat(cipher) * key0
+def decode_text():
+    key0 = mat(key).I
+    print(key0)
+    cipher = encode_text(message)
+    print(cipher)
+    mess0 = cipher * key
+    # print(mess0)
     mess0 = array(mess0)
     for i in range(len(mess0)):
         mess0[i] = mess0[i] % N
@@ -60,5 +60,4 @@ def get_message():
 
 if __name__ == "__main__":
     # get_cipher_text(message)
-    get_message()
-    
+    decode_text()
