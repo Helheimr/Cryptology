@@ -28,13 +28,13 @@ class LFSR:
         self.seq = list(seq)
         self.data = ''
         # 得到反馈所需要的索引
-        self.feedback_indexs = [i for i in range(len(self.seq)) if self.seq[i] == '1']
+        self.feedback_indexs = [i for i in range(
+            len(self.seq)) if self.seq[i] == '1']
         # 是否打印反馈序列
         self.true_print = False
 
     def encrypt_lfsr(self):
         """加密或解密数据"""
-        print('周期为' + str(self.get_period(self.seq)))
         # 把需要加密的数据换位成二进制
         b_data = ['{:06b}'.format(LIST.index(d)) for d in self.data]
         b_data = list("".join(b_data))  # 将列表[[],[]..] 化为 [..,..]
@@ -53,26 +53,16 @@ class LFSR:
         print('密钥为：' + ''.join(key))
 
         # 计算二进制密文
-        cipher_b_data = [str(int(key[i]) ^ int(b_data[i])) for i in range(data_length)]
+        cipher_b_data = [str(int(key[i]) ^ int(b_data[i]))
+                         for i in range(data_length)]
         # 将二进制分组
-        cipher_b_data = ["".join(cipher_b_data[i:i + 6]) for i in range(0, data_length, 6)]
+        cipher_b_data = ["".join(cipher_b_data[i:i + 6])
+                         for i in range(0, data_length, 6)]
         # 换位为字符
         cipher_data = [LIST[int(cipher, 2)] for cipher in cipher_b_data]
         cipher_data = ''.join(cipher_data)
         print('密文为：' + cipher_data)
         print('-' * 50)
-
-    def get_period(self, init):
-        """计算给定序列的周期
-
-        :param init: 初始序列
-        :return: 返回周期
-        """
-        initial = ''.join(init)
-        for i in range(0, 128):
-            init, out = self.cycle(init)
-            if initial == ''.join(init):
-                return i
 
     def cycle(self, init_status):
         """根据初始态和反馈参数循环移位下一状态
@@ -87,7 +77,8 @@ class LFSR:
         # 得到反馈值即最高位
         feedback_value = int(init_status[self.feedback_indexs[0]])
         for i in range(len(self.feedback_indexs) - 1):
-            feedback_value = feedback_value ^ int(init_status[self.feedback_indexs[i + 1]])
+            feedback_value = feedback_value ^ int(
+                init_status[self.feedback_indexs[i + 1]])
         # 输出值为最低位
         out = init_status[-1]
         # 倒序遍历
