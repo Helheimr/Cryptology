@@ -1,5 +1,11 @@
-# 编程实现快速模幂运算
-# 编程实现求逆运算
+#!/usr/bin/env python
+# -*- coding: utf-8 -*
+# @Author  :   Zyue
+# @Time    :  2020/2/8 20:23
+"""
+编程实现快速模幂运算
+编程实现求逆运算
+"""
 
 
 def gcd(a, b):
@@ -16,8 +22,8 @@ def findModReverse(a, m):
     u1, u2, u3 = 1, 0, a
     v1, v2, v3 = 0, 1, m
     while v3 != 0:
-        q = u3//v3
-        v1, v2, v3, u1, u2, u3 = (u1-q*v1), (u2-q*v2), (u3-q*v3), v1, v2, v3
+        q = u3 // v3
+        v1, v2, v3, u1, u2, u3 = (u1 - q * v1), (u2 - q * v2), (u3 - q * v3), v1, v2, v3
     return u1 % m
 
 
@@ -29,11 +35,11 @@ def fastExpMod(b, e, m):
             result = (result * b) % m
         e >>= 1
         # b, b^2, b^4, b^8, ... , b^(2^n)
-        b = (b*b) % m
+        b = (b * b) % m
     return result
 
 
 if __name__ == "__main__":
-    # a = fastExpMod(5, 1003, 12)
-    # print(a)
-    print(findModReverse(5,12))
+    a = fastExpMod(5, 1003, 12)
+    print('fastExpMod(5, 1003, 12): ' + str(a))
+    print('findModReverse(5,12): ' + str(findModReverse(5, 12)))

@@ -1,63 +1,97 @@
-# Hill密码
-# 参数选取：密钥矩阵和明文/密文的元素均取自Z 26
-# 密钥矩阵为:    [8, 6, 9, 5]
-#               [6, 9, 5, 10]
-#               [5, 8, 4, 9]
-#               [10, 6, 11, 4]
-# 加解密：若明文为7,8,11,11, 计算密文；若密文为9,8,8,24，计算明文。
+#!/usr/bin/env python
+# -*- coding: utf-8 -*
+# @Author  :   --嫖的--
+# @Time    :  2020/2/7 23:26
 
-from numpy import *
 import numpy as np
+from operator import mod
 
-key = [[8, 6, 9, 5],
-       [6, 9, 5, 10],
-       [5, 8, 4, 9],
-       [10, 6, 11, 4]]
-message = [7, 8, 11, 11]
-N = 26
-
-
-def gcd(a, b):
-    # 辗转相除法求最大公约数
-    while a != 0:
-        a, b = b % a, a
-    return b
+# 加密密钥矩阵
+K_LIST = [[8, 6, 9, 5],
+          [6, 9, 5, 10],
+          [5, 8, 4, 9],
+          [10, 6, 11, 4]]
 
 
-def findModReverse(a, m):
-    # 这个扩展欧几里得算法求模逆
-    if gcd(a, m) != 1:
-        return None
-    u1, u2, u3 = 1, 0, a
-    v1, v2, v3 = 0, 1, m
-    while v3 != 0:
-        q = u3//v3
-        v1, v2, v3, u1, u2, u3 = (u1-q*v1), (u2-q*v2), (u3-q*v3), v1, v2, v3
-    return u1 % m
+def deal_num(list_index, k_list):
+    """加密处理C＝KP矩阵相乘
+
+    :param list_index: 消息矩阵
+    :param k_list: 加密矩阵
+    :return:
+    """
+    deal_list = [0, 0, 0, 0]
+    for i in range(len(k_list)):
+        for j in range(len(k_list[i])):
+            deal_list[i] += list_index[j] * k_list[i][j]
+        deal_list[i] = (deal_list[i] % 26)
+    return deal_list
 
 
-def encode_text(message):
-    cipher_text = mat(message) * mat(key)
-    cipher_text = array(cipher_text)
-    for i in range(len(cipher_text)):
-        cipher_text[i] = cipher_text[i] % 26
-    cipher_text = cipher_text
-    return mat(cipher_text)
+def encryption(clear_text):
+    """
+    加密时调用的函数
+
+    :param clear_text:输入的明文
+    :return: 加密后的密文
+    """
+    list_clear_text = list(clear_text.split(" "))
+    cipher_list = []  # 用来存入密文
+
+    # 明文每3个为一组，找出每组在字母表中的位置(用一个列表来保存)
+    for i in range(len(list_clear_text)):
+        if i % 3 == 0 and i + 3 <= len(list_clear_text):
+            w = int(list_clear_text[i])
+            x = int(list_clear_text[i + 1])
+            y = int(list_clear_text[i + 2])
+            z = int(list_clear_text[i + 3])
+            list_index = [w, x, y, z]
+            # 调用deal_num函数进行加密 矩阵K与明文P运算得到密文C，即C＝KP
+            deal_list = deal_num(list_index, K_LIST)
+            cipher_list.extend(deal_list)
+    return cipher_list
 
 
-def decode_text():
-    key0 = mat(key).I
-    print(key0)
-    cipher = encode_text(message)
-    print(cipher)
-    mess0 = cipher * key
-    # print(mess0)
-    mess0 = array(mess0)
-    for i in range(len(mess0)):
-        mess0[i] = mess0[i] % N
-    print(mess0)
+def decryption(cipher_text, k_ok):
+    """
+    解密时调用的函数
+
+    :param k_ok:
+    :param cipher_text:输入的密文
+    :return: 解密后的明文
+    """
+    list_cipher_text = list(cipher_text.split(" "))
+    clear_list = []  # 用来存入明文
+    # 明文每3个为一组，找出每组在字母表中的位置(用一个列表来保存)
+    for i in range(len(list_cipher_text)):
+        if i % 3 == 0 and i + 3 <= len(list_cipher_text):
+            w = int(list_cipher_text[i])
+            x = int(list_cipher_text[i + 1])
+            y = int(list_cipher_text[i + 2])
+            z = int(list_cipher_text[i + 3])
+            list_index = [w, x, y, z]
+            # 调用deal_num函数进行加密 矩阵K与明文P运算得到密文C，即C＝KP
+            deal_list = deal_num(list_index, k_ok)
+            clear_list.extend(deal_list)
+
+    return clear_list
 
 
 if __name__ == "__main__":
-    # get_cipher_text(message)
-    decode_text()
+    while True:
+        choice = input("加密输入e，解密输入d，退出输入q：\n")
+        if choice == "e":
+            clear_text = input("请输入明文(使用空格进行分割):")
+            print("加密成功！密文:", encryption(clear_text))
+        if choice == "d":
+            # 计算逆矩阵K_OB
+            K_OB = np.zeros(shape=(4, 4))
+            K_NEW = np.linalg.inv(K_LIST)
+            for i in range(len(K_NEW)):
+                for j in range(len(K_NEW[i])):
+                    K_OB[i][j] = int(mod(round(K_NEW[i][j]), 26))
+            # print(K_OB)
+            cipher_text = input("请输入密文(使用空格进行分割):")
+            print("解密成功！明文:", decryption(cipher_text, K_OB))
+        if choice == 'q':
+            break

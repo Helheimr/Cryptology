@@ -1,9 +1,10 @@
-from Cryptodome.Hash import SHA
-from Cryptodome.Signature import PKCS1_v1_5 as Signature_PKCS1_v1_5
-from Cryptodome.PublicKey import RSA
 import base64
 
-message = b'xiyou031732xxlyuan'
+from Cryptodome.Hash import SHA
+from Cryptodome.PublicKey import RSA
+from Cryptodome.Signature import PKCS1_v1_5 as Signature_PKCS1_v1_5
+
+message = b'xupt03176666zyue'
 
 # 数据签名
 with open('rsa.key', 'r') as f:
@@ -14,7 +15,7 @@ with open('rsa.key', 'r') as f:
     digest.update(message)
     signature = base64.b64encode(signer.sign(digest))
     print('signature text: ', signature)
-
+print()
 # 验证签名
 with open('rsa.pub', 'r') as f:
     public_key = f.read()
